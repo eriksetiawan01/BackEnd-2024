@@ -17,6 +17,7 @@ Route::delete('/users/delete/{id}', [UserController::class, 'destroy']);
 
 // Pertemuan 5
 Route::get('/students', [StudentController::class, 'index']);
+Route::get('/students/{id}', [StudentController::class, 'show']);
 Route::post('/students', [StudentController::class, 'store']);
 Route::put('/students/{id}', [StudentController::class, 'update']);
 Route::delete('/students/{id}', [StudentController::class, 'destroy']);
