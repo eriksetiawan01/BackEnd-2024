@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
 
 router.get("/students", StudentController.index);  // Menampilkan semua data students
 router.post("/students", StudentController.store);  // Menambahkan data student baru
-router.put("/students/:id", StudentController.update);  // Mengupdate data student
-router.delete("/students/:id", StudentController.destroy);  // Menghapus data student
+// router.put("/students/:id", StudentController.update);  // Mengupdate data student
+// router.delete("/students/:id", StudentController.destroy);  // Menghapus data student
 
 export default router;  
