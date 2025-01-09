@@ -5,77 +5,107 @@ import students from '../data/students.js';
 
 class StudentController {
   async index(req, res) {
-    try {
-      const students = await Student.all();  // Menggunakan await untuk menangani Promise
+    const students = await Student.all();
+
+    // data array lebih dari o
+    if (students.length > 0) {
       const data = {
-        message: "Menampilkan semua students",
-        data: students,  // Menampilkan data students
+        message: "Menampilkan semua data students",
+        data: students,
       };
-      res.json(data);
-    } catch (err) {
-      res.status(500).json({ message: "Terjadi kesalahan", error: err.message });
+
+      res.status(200).json(data);
+    } else {
+      const data = {
+        message: "Students is empty",
+      };
+
+      res.status(200).json(data);
+    };
+  }
+
+
+  async show(req, res) {
+    const { id } = req.params;
+    
+    const students = await Student.find(id);
+
+    if (students) {
+      const data = {
+        message : `Menampilkan detail students`,
+        data: students,
+      };
+
+      res.status(200).json(data);
+    } else {
+      const data = {
+        message: `Student not found`,
+      };
+
+      res.status(404).json(data);
     }
   }
 
   // Menambahkan data student baru
   async store(req, res) {
-    const { name } = req.body;
+    const { name, nim, email, majority } = req.body;
 
-    if (!name) {
-        return res.status(400).json({ message: "Nama siswa wajib diisi" });
-    }
-
-    try {
-        // Menambahkan student baru
-        const result = await Student.create(name);
-
+    if (!name || !nim || !email || !majority) {
         const data = {
-            message: `Menambahkan data student: ${name}`,
-            data: { id: result.insertId, name },  // Mengembalikan id dan name siswa
+          message: "Semua data harus dikirim",
         };
 
-        res.status(201).json(data);
-    } catch (err) {
-        res.status(500).json({ message: "Gagal menambahkan student", error: err.message });
+        return res.status(422).json(data);
     }
+
+    // else
+    const students = await Student.create(req.body);
+
+    const data = {
+      message: "Menambahkan data student",
+      data: students,
+    };
+
+    return res.status(201).json(data);
 }
 
-  update(req, res) {
+  async update(req, res) {
     const { id } = req.params;
-    const { name } = req.body;
 
-    const student = students.find(student => student.id === parseInt(id));
+    const student = await Student.find(id);
 
     if (student) {
-      student.name = name;  // Mengupdate nama student
-
+      const student = await Student.update(id, req.body);
       const data = {
-        message: `Mengedit student id ${id}, nama menjadi ${name}`,
-        data: student,
+        message : `Mengedit data students`,
+        data : student,
       };
-
       res.json(data);
     } else {
-      res.status(404).json({ message: `Student dengan id ${id} tidak ditemukan` });
+      const data = {
+        message: `Student not found`,
+      };
+      res.status(404).json(data);
     }
   }
 
-  destroy(req, res) {
+  async destroy(req, res) {
     const { id } = req.params;
+    const student = await Student.find(id);
 
-    const studentIndex = students.findIndex(student => student.id === parseInt(id));
-
-    if (studentIndex !== -1) {
-      const deletedStudent = students.splice(studentIndex, 1);
-
+    if (Student) {
+      await Student.delete(id);
       const data = {
-        message: `Menghapus student id ${id}`,
-        data: deletedStudent,
+        message : `Menghapus data students`,
       };
 
-      res.json(data);
+      res.status(200).json(data);
     } else {
-      res.status(404).json({ message: `Student dengan id ${id} tidak ditemukan` });
+      const data = {
+        message : `Student not found`,
+      };
+
+      res.status(404).json(data);
     }
   }
 }
